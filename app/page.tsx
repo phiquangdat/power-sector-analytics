@@ -124,47 +124,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Challenge Context */}
-      <div className="bg-gray-900 text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold mb-6">
-              WISE Sustainability Intelligence Challenge
-            </h2>
-            <p className="text-xl text-gray-300 mb-8 max-w-4xl mx-auto">
-              This prototype addresses the WISE ecosystem challenge: developing
-              innovative solutions that improve sustainability practices and
-              regulatory compliance in the power sector. Built for the 1.5°C
-              target and net-zero by 2050.
-            </p>
-            <div className="grid md:grid-cols-2 gap-8 mt-12">
-              <div className="text-left">
-                <h3 className="text-xl font-semibold mb-4 text-green-400">
-                  Technical Innovation
-                </h3>
-                <ul className="space-y-2 text-gray-300">
-                  <li>• Real-time data integration from multiple sources</li>
-                  <li>• Advanced analytics with goal tracking metrics</li>
-                  <li>• EU Data Act compliant data sharing architecture</li>
-                  <li>• Scalable cloud-native platform</li>
-                </ul>
-              </div>
-              <div className="text-left">
-                <h3 className="text-xl font-semibold mb-4 text-green-400">
-                  Business Impact
-                </h3>
-                <ul className="space-y-2 text-gray-300">
-                  <li>• 70% reduction in manual reporting hours</li>
-                  <li>• Enhanced access to sustainability financing</li>
-                  <li>• Improved investor confidence and creditworthiness</li>
-                  <li>• Risk reduction through automated compliance</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* CTA Section */}
       <div className="bg-green-600 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
