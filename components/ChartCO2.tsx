@@ -18,9 +18,9 @@ export function ChartCO2({ points }: { points: Point[] }) {
 				},
 			]}
 			layout={{
-				title: 'CO₂ intensity over time',
-				xaxis: { title: 'Time' },
-				yaxis: { title: 'gCO₂/kWh' },
+				title: { text: 'CO₂ intensity over time' },
+				xaxis: { title: { text: 'Time' } },
+				yaxis: { title: { text: 'gCO₂/kWh' } },
 				autosize: true,
 				margin: { l: 50, r: 20, t: 40, b: 40 },
 			}}
@@ -29,4 +29,5 @@ export function ChartCO2({ points }: { points: Point[] }) {
 		/>
 	)
 }
+
 

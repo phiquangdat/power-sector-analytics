@@ -24,9 +24,9 @@ export function ChartMix({ rows }: { rows: Mix[] }) {
 		<Plot
 			data={series.map(s => ({ x, y: s.y, stackgroup: 'one', type: 'scatter', mode: 'lines', name: s.name, line: { color: s.color } }))}
 			layout={{
-				title: 'Generation mix (MW)',
-				xaxis: { title: 'Time' },
-				yaxis: { title: 'MW' },
+				title: { text: 'Generation mix (MW)' },
+				xaxis: { title: { text: 'Time' } },
+				yaxis: { title: { text: 'MW' } },
 				autosize: true,
 				margin: { l: 50, r: 20, t: 40, b: 40 },
 			}}
@@ -35,4 +35,5 @@ export function ChartMix({ rows }: { rows: Mix[] }) {
 		/>
 	)
 }
+
 

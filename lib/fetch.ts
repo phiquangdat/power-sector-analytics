@@ -12,6 +12,10 @@ export type MixRow = {
 export type NetZeroRow = { year: number; actual_emissions_mt: number; target_emissions_mt: number; alignment_pct: number }
 
 export async function fetchCo2(limit = 96): Promise<Co2Row[]> {
+	if (!supabase) {
+		console.warn('Supabase not initialized, returning empty data')
+		return []
+	}
 	const { data, error } = await supabase
 		.from('co2_intensity')
 		.select('*')
@@ -22,6 +26,10 @@ export async function fetchCo2(limit = 96): Promise<Co2Row[]> {
 }
 
 export async function fetchMix(limit = 96): Promise<MixRow[]> {
+	if (!supabase) {
+		console.warn('Supabase not initialized, returning empty data')
+		return []
+	}
 	const { data, error } = await supabase
 		.from('generation_mix')
 		.select('*')
@@ -32,6 +40,10 @@ export async function fetchMix(limit = 96): Promise<MixRow[]> {
 }
 
 export async function fetchNetZero(limit = 100): Promise<NetZeroRow[]> {
+	if (!supabase) {
+		console.warn('Supabase not initialized, returning empty data')
+		return []
+	}
 	const { data, error } = await supabase
 		.from('netzero_alignment')
 		.select('*')
