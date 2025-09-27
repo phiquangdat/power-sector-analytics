@@ -30,3 +30,5 @@ class NetZeroAlignmentRecord:
 	target_emissions_mt: float
 	alignment_pct: float
 
+
+

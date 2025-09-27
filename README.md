@@ -115,3 +115,5 @@ Assumptions:
 - Harden RLS and move inserts to service role key.
 - Replace simulation with real data sources (SCADA, fuel, verified emissions).
 - Package APIs for the frontend (OpenAPI).
+
+

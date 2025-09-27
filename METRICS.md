@@ -64,3 +64,5 @@ This document explains each metric in the prototype, how it’s calculated, and 
 - Simulation: uses diurnal demand, weather variation, and occasional outages/price shocks to mimic real behavior.
 - Proportional intensity target: where direct intensity targets are absent, intensity target is scaled from base year using annual emissions targets.
 - Illustrative ETA: for guidance only—production should use validated pathways/scenarios (e.g., IEA NZE) and robust demand forecasts.
+
+

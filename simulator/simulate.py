@@ -36,11 +36,12 @@ def simulate_generation_mix(ts: datetime, base_total_mw: float = 7000.0) -> Gene
 	price_shock = fossil_price_shock_factor()
 
 	# Baseline capacities (MW) roughly aligned to doc table totals
-	base_hydro = 950.0
-	base_wind = 1800.0
-	base_solar = 150.0 if 8 <= ts.hour <= 18 else 10.0  # solar day-night profile
-	base_nuclear = 2700.0
-	base_fossil = max(1200.0, 1600.0 * load_factor)
+	# DRAMATIC variation for testing - much more extreme changes
+	base_hydro = 950.0 * bounded_normal(1.0, 0.5, 0.2, 2.0)
+	base_wind = 1800.0 * bounded_normal(1.0, 0.8, 0.1, 3.0)
+	base_solar = (150.0 if 8 <= ts.hour <= 18 else 10.0) * bounded_normal(1.0, 1.0, 0.05, 4.0)
+	base_nuclear = 2700.0 * bounded_normal(1.0, 0.3, 0.5, 1.5)
+	base_fossil = max(1200.0, 1600.0 * load_factor) * bounded_normal(1.0, 0.5, 0.3, 2.0)
 
 	# Apply multiplicative factors and ensure non-negative
 	hydro = max(0.0, base_hydro * hydro_f)

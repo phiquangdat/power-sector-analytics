@@ -21,3 +21,5 @@ def fetch_table(table: str, limit: int = 500, order: str = "timestamp") -> pd.Da
 	resp.raise_for_status()
 	return pd.DataFrame(resp.json())
 
+
+

@@ -34,3 +34,5 @@ def summarize_netzero(df: pd.DataFrame) -> dict:
 		"latest_alignment_pct": float(df.sort_values("year")["alignment_pct"].iloc[-1]),
 	}
 
+
+

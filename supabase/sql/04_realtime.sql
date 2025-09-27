@@ -6,3 +6,5 @@ alter publication supabase_realtime add table public.co2_intensity;
 alter publication supabase_realtime add table public.generation_mix;
 alter publication supabase_realtime add table public.netzero_alignment;
 
+
+

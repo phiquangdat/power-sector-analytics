@@ -1,0 +1,342 @@
+Sustainability Intelligence Platform – 
+Documentation (for Development & 
+Simulation) 
+
+1. Project Context 
+
+●  Event: JunctionX Vaasa 2025 – Hack the Future of Energy & Tech 
+
+●  Challenge Partner: Wärtsilä 
+
+●  Theme: Sustainability Intelligence Platform 
+
+●  Objective: Build a prototype tool that simulates real-time power sector metrics, hosted 
+
+on Supabase, with a dashboard for sustainability intelligence. 
+
+2. Problem Statement 
+
+The power sector produces ~36% of global CO₂ emissions. Current reporting is fragmented and 
+retrospective. 
+ Our solution: A real-time simulation of key sustainability KPIs stored in Supabase and 
+visualized in a dashboard, helping companies measure progress toward net zero 2050 and 
+comply with reporting standards. 
+
+3. Core KPIs (Chosen for Simulation) 
+
+1.  CO₂ Intensity of Electricity (gCO₂/kWh) 
+
+○  Formula: Emissions ÷ Total Electricity Generated. 
+
+○  Simulated range: 100–300 gCO₂/kWh (depending on renewables share). 
+
+2.  Renewable Share of Generation (%) 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+○  Formula: (Renewable Generation ÷ Total Generation) × 100. 
+
+○  Renewables include hydro, wind, solar. 
+
+○  Simulated range: 30–60%. 
+
+3.  Net Zero Trajectory Alignment (%) 
+
+○  Formula: (Reduction achieved ÷ Required reduction path to 2050) × 100. 
+
+○  Requires historical baseline (2020 = 30 Mt CO₂) and yearly target path. 
+
+○  Simulated as a percentage showing if we are ahead / on track / behind. 
+
+4. Database Schema (Supabase) 
+
+We will simulate and store the KPI data in Supabase. 
+ Tables: 
+
+Table 1: co2_intensity 
+
+id 
+
+timestamp 
+
+co2_intensity_g_per_kw
+h 
+
+1  2025-09-27 09:00:00  145 
+
+2  2025-09-27 09:15:00  138 
+
+3  2025-09-27 09:30:00  150 
+
+4  2025-09-27 09:45:00  132 
+
+5  2025-09-27 10:00:00  128 
+
+Table 2: generation_mix 
+
+i
+d 
+
+timesta
+mp 
+
+hydro_
+mw 
+
+wind_
+mw 
+
+solar_
+mw 
+
+nuclear_
+mw 
+
+fossil_
+mw 
+
+total_
+mw 
+
+renewable_shar
+e_pct 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+950 
+
+1800 
+
+150 
+
+2700 
+
+1400 
+
+6950 
+
+40.9 
+
+940 
+
+1820 
+
+160 
+
+2700 
+
+1350 
+
+6970 
+
+42.0 
+
+930 
+
+1750 
+
+170 
+
+2700 
+
+1500 
+
+7050 
+
+40.0 
+
+920 
+
+1700 
+
+180 
+
+2700 
+
+1550 
+
+7050 
+
+39.2 
+
+910 
+
+1650 
+
+200 
+
+2700 
+
+1600 
+
+7060 
+
+38.3 
+
+1  2025-09
+-27 
+09:00:0
+0 
+
+2  2025-09
+-27 
+09:15:0
+0 
+
+3  2025-09
+-27 
+09:30:0
+0 
+
+4  2025-09
+-27 
+09:45:0
+0 
+
+5  2025-09
+-27 
+10:00:0
+0 
+
+Table 3: netzero_alignment 
+
+year 
+
+actual_emissions_
+mt 
+
+target_emissions_
+mt 
+
+alignment_pc
+t 
+
+2020  30 
+
+2021  28 
+
+2022  27 
+
+2023  26 
+
+2024  26 
+
+2025  27 
+
+30 
+
+29 
+
+28 
+
+27 
+
+26 
+
+25 
+
+100 
+
+110 
+
+110 
+
+106 
+
+100 
+
+83 
+
+ 
+ 
+5. Architecture 
+
+●  Supabase: stores simulated data tables. 
+
+●  Backend: Python Flask / Node.js → fetch data from Supabase and serve via API 
+
+endpoints. 
+
+●  Frontend: React + Chart.js/Plotly → fetch from backend and render dashboard. 
+
+6. Dashboard Features 
+
+●  KPI Cards: show current CO₂ Intensity, Renewable Share, Alignment % in real time. 
+
+●  Time Series Graphs: trends of emissions and renewable share. 
+
+●  Trajectory Chart: actual vs target emissions (net zero path). 
+
+●  Simulation Updates: script inserts new rows into Supabase every few minutes to mimic 
+
+real-time feed. 
+
+7. Team Roles 
+
+●  Data Scientist (you): build simulation logic for KPIs, insert into Supabase. 
+
+●  Web Developer: connect frontend to Supabase API, design dashboard. 
+
+●  Business/Finance Student: prepare business case, market potential, compliance 
+
+value. 
+
+8. Development Roadmap 
+
+●  Step 1: Define schema in Supabase (done ✅). 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+●  Step 2: Write Python script to simulate & insert data periodically. 
+
+●  Step 3: Build backend endpoints to query Supabase. 
+
+●  Step 4: Build frontend dashboard (React) to show KPIs & charts. 
+
+●  Step 5: Integrate and polish for demo. 
+
+9. Deliverables 
+
+●  Working dashboard with live simulated data. 
+
+●  Documentation of KPI logic. 
+
+●  Business presentation linking solution to net zero goals. 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+

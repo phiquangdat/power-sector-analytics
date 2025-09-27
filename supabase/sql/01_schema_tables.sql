@@ -29,3 +29,5 @@ create table if not exists public.netzero_alignment (
 	alignment_pct numeric not null
 );
 
+
+

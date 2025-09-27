@@ -34,3 +34,5 @@ def fetch_supabase_table(table: str, limit: int = 1000, order: str = "timestamp"
 def read_csv_table(path: str) -> pd.DataFrame:
 	return pd.read_csv(path)
 
+
+
