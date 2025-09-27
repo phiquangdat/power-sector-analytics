@@ -124,24 +124,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* CTA Section */}
-      <div className="bg-green-600 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Ready to Transform Your Sustainability Reporting?
-          </h2>
-          <p className="text-xl text-green-100 mb-8">
-            Join the future of power sector sustainability intelligence
-          </p>
-          <Link
-            href="/dashboard"
-            className="bg-white text-green-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-          >
-            Explore the Platform
-          </Link>
-        </div>
-      </div>
-
       {/* Footer */}
       <footer className="bg-gray-800 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
