@@ -235,21 +235,6 @@ export default function CompliancePage() {
           </div>
         </div>
 
-        {/* CTA */}
-        <div className="bg-gray-50 rounded-lg p-12 text-center">
-          <h2 className="text-2xl font-light text-gray-900 mb-4">
-            Ready to Transform Your Compliance?
-          </h2>
-          <p className="text-gray-600 mb-8">
-            Join the future of power sector sustainability intelligence
-          </p>
-          <Link
-            href="/dashboard"
-            className="bg-green-600 text-white px-8 py-4 rounded-lg font-medium hover:bg-green-700 transition-colors"
-          >
-            Explore the Platform
-          </Link>
-        </div>
       </div>
     </div>
   );
