@@ -21,8 +21,7 @@ export function Navbar() {
   };
 
   const navItems = [
-    { href: "/", label: "Home" },
-    { href: "/dashboard", label: "Dashboard" },
+    { href: "/", label: "Dashboard" },
     { href: "/compliance", label: "Compliance" },
     { href: "/methodology", label: "Methodology" },
     { href: "/about", label: "About" },
