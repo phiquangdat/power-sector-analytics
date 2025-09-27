@@ -1,6 +1,18 @@
 import { Router, Request, Response } from 'express';
 import { DataService } from '../services/dataService';
-import { ApiResponse, ErrorResponse } from '../types';
+import {
+  ApiResponse,
+  ErrorResponse,
+  CreateResponse,
+  UpdateResponse,
+  DeleteResponse,
+  CreateCo2Request,
+  UpdateCo2Request,
+  CreateMixRequest,
+  UpdateMixRequest,
+  CreateNetZeroRequest,
+  UpdateNetZeroRequest,
+} from "../types";
 
 const router = Router();
 
@@ -379,6 +391,695 @@ router.get('/mix/latest', async (req: Request, res: Response) => {
     res.json(response);
   } catch (error) {
     console.error('Error in latest mix endpoint:', error);
+    const errorResponse: ErrorResponse = {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString(),
+      path: req.path
+    };
+    res.status(500).json(errorResponse);
+  }
+});
+
+// ========== CRUD OPERATIONS ==========
+
+/**
+ * @swagger
+ * /api/co2:
+ *   post:
+ *     summary: Create new CO2 intensity record
+ *     description: Creates a new CO2 intensity measurement record
+ *     tags: [CO2 Data]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateCo2Request'
+ *     responses:
+ *       201:
+ *         description: Successfully created CO2 intensity record
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CreateResponse'
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.post('/co2', async (req: Request, res: Response) => {
+  try {
+    const data: CreateCo2Request = req.body;
+    
+    // Basic validation
+    if (!data.timestamp || typeof data.co2_intensity_g_per_kwh !== 'number') {
+      const errorResponse: ErrorResponse = {
+        success: false,
+        error: 'Invalid request data. Required: timestamp (string), co2_intensity_g_per_kwh (number)',
+        timestamp: new Date().toISOString(),
+        path: req.path
+      };
+      return res.status(400).json(errorResponse);
+    }
+
+    const result = await DataService.createCo2Data(data);
+    
+    const response: CreateResponse = {
+      success: true,
+      data: result,
+      timestamp: new Date().toISOString()
+    };
+    
+    res.status(201).json(response);
+  } catch (error) {
+    console.error('Error in POST CO2 endpoint:', error);
+    const errorResponse: ErrorResponse = {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString(),
+      path: req.path
+    };
+    res.status(500).json(errorResponse);
+  }
+});
+
+/**
+ * @swagger
+ * /api/co2/{id}:
+ *   put:
+ *     summary: Update CO2 intensity record
+ *     description: Updates an existing CO2 intensity measurement record
+ *     tags: [CO2 Data]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The CO2 record ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateCo2Request'
+ *     responses:
+ *       200:
+ *         description: Successfully updated CO2 intensity record
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UpdateResponse'
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Record not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.put('/co2/:id', async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    const data: UpdateCo2Request = req.body;
+    
+    if (isNaN(id)) {
+      const errorResponse: ErrorResponse = {
+        success: false,
+        error: 'Invalid ID parameter',
+        timestamp: new Date().toISOString(),
+        path: req.path
+      };
+      return res.status(400).json(errorResponse);
+    }
+
+    const result = await DataService.updateCo2Data(id, data);
+    
+    const response: UpdateResponse = {
+      success: true,
+      data: result,
+      timestamp: new Date().toISOString()
+    };
+    
+    res.json(response);
+  } catch (error) {
+    console.error('Error in PUT CO2 endpoint:', error);
+    const errorResponse: ErrorResponse = {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString(),
+      path: req.path
+    };
+    res.status(500).json(errorResponse);
+  }
+});
+
+/**
+ * @swagger
+ * /api/co2/{id}:
+ *   delete:
+ *     summary: Delete CO2 intensity record
+ *     description: Deletes an existing CO2 intensity measurement record
+ *     tags: [CO2 Data]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The CO2 record ID
+ *     responses:
+ *       200:
+ *         description: Successfully deleted CO2 intensity record
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/DeleteResponse'
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Record not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.delete('/co2/:id', async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      const errorResponse: ErrorResponse = {
+        success: false,
+        error: 'Invalid ID parameter',
+        timestamp: new Date().toISOString(),
+        path: req.path
+      };
+      return res.status(400).json(errorResponse);
+    }
+
+    await DataService.deleteCo2Data(id);
+    
+    const response: DeleteResponse = {
+      success: true,
+      message: 'CO2 intensity record deleted successfully',
+      timestamp: new Date().toISOString()
+    };
+    
+    res.json(response);
+  } catch (error) {
+    console.error('Error in DELETE CO2 endpoint:', error);
+    const errorResponse: ErrorResponse = {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString(),
+      path: req.path
+    };
+    res.status(500).json(errorResponse);
+  }
+});
+
+/**
+ * @swagger
+ * /api/mix:
+ *   post:
+ *     summary: Create new generation mix record
+ *     description: Creates a new generation mix measurement record
+ *     tags: [Generation Mix]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateMixRequest'
+ *     responses:
+ *       201:
+ *         description: Successfully created generation mix record
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CreateResponse'
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.post('/mix', async (req: Request, res: Response) => {
+  try {
+    const data: CreateMixRequest = req.body;
+    
+    // Basic validation
+    if (!data.timestamp || 
+        typeof data.hydro_mw !== 'number' ||
+        typeof data.wind_mw !== 'number' ||
+        typeof data.solar_mw !== 'number' ||
+        typeof data.nuclear_mw !== 'number' ||
+        typeof data.fossil_mw !== 'number' ||
+        typeof data.renewable_share_pct !== 'number') {
+      const errorResponse: ErrorResponse = {
+        success: false,
+        error: 'Invalid request data. All fields must be numbers except timestamp (string)',
+        timestamp: new Date().toISOString(),
+        path: req.path
+      };
+      return res.status(400).json(errorResponse);
+    }
+
+    const result = await DataService.createMixData(data);
+    
+    const response: CreateResponse = {
+      success: true,
+      data: result,
+      timestamp: new Date().toISOString()
+    };
+    
+    res.status(201).json(response);
+  } catch (error) {
+    console.error('Error in POST mix endpoint:', error);
+    const errorResponse: ErrorResponse = {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString(),
+      path: req.path
+    };
+    res.status(500).json(errorResponse);
+  }
+});
+
+/**
+ * @swagger
+ * /api/mix/{id}:
+ *   put:
+ *     summary: Update generation mix record
+ *     description: Updates an existing generation mix measurement record
+ *     tags: [Generation Mix]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The generation mix record ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateMixRequest'
+ *     responses:
+ *       200:
+ *         description: Successfully updated generation mix record
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UpdateResponse'
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Record not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.put('/mix/:id', async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    const data: UpdateMixRequest = req.body;
+    
+    if (isNaN(id)) {
+      const errorResponse: ErrorResponse = {
+        success: false,
+        error: 'Invalid ID parameter',
+        timestamp: new Date().toISOString(),
+        path: req.path
+      };
+      return res.status(400).json(errorResponse);
+    }
+
+    const result = await DataService.updateMixData(id, data);
+    
+    const response: UpdateResponse = {
+      success: true,
+      data: result,
+      timestamp: new Date().toISOString()
+    };
+    
+    res.json(response);
+  } catch (error) {
+    console.error('Error in PUT mix endpoint:', error);
+    const errorResponse: ErrorResponse = {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString(),
+      path: req.path
+    };
+    res.status(500).json(errorResponse);
+  }
+});
+
+/**
+ * @swagger
+ * /api/mix/{id}:
+ *   delete:
+ *     summary: Delete generation mix record
+ *     description: Deletes an existing generation mix measurement record
+ *     tags: [Generation Mix]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The generation mix record ID
+ *     responses:
+ *       200:
+ *         description: Successfully deleted generation mix record
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/DeleteResponse'
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Record not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.delete('/mix/:id', async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      const errorResponse: ErrorResponse = {
+        success: false,
+        error: 'Invalid ID parameter',
+        timestamp: new Date().toISOString(),
+        path: req.path
+      };
+      return res.status(400).json(errorResponse);
+    }
+
+    await DataService.deleteMixData(id);
+    
+    const response: DeleteResponse = {
+      success: true,
+      message: 'Generation mix record deleted successfully',
+      timestamp: new Date().toISOString()
+    };
+    
+    res.json(response);
+  } catch (error) {
+    console.error('Error in DELETE mix endpoint:', error);
+    const errorResponse: ErrorResponse = {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString(),
+      path: req.path
+    };
+    res.status(500).json(errorResponse);
+  }
+});
+
+/**
+ * @swagger
+ * /api/netzero:
+ *   post:
+ *     summary: Create new net-zero alignment record
+ *     description: Creates a new net-zero alignment record
+ *     tags: [Net-Zero]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateNetZeroRequest'
+ *     responses:
+ *       201:
+ *         description: Successfully created net-zero alignment record
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CreateResponse'
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.post('/netzero', async (req: Request, res: Response) => {
+  try {
+    const data: CreateNetZeroRequest = req.body;
+    
+    // Basic validation
+    if (typeof data.year !== 'number' ||
+        typeof data.actual_emissions_mt !== 'number' ||
+        typeof data.target_emissions_mt !== 'number' ||
+        typeof data.alignment_pct !== 'number') {
+      const errorResponse: ErrorResponse = {
+        success: false,
+        error: 'Invalid request data. All fields must be numbers',
+        timestamp: new Date().toISOString(),
+        path: req.path
+      };
+      return res.status(400).json(errorResponse);
+    }
+
+    const result = await DataService.createNetZeroData(data);
+    
+    const response: CreateResponse = {
+      success: true,
+      data: result,
+      timestamp: new Date().toISOString()
+    };
+    
+    res.status(201).json(response);
+  } catch (error) {
+    console.error('Error in POST netzero endpoint:', error);
+    const errorResponse: ErrorResponse = {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString(),
+      path: req.path
+    };
+    res.status(500).json(errorResponse);
+  }
+});
+
+/**
+ * @swagger
+ * /api/netzero/{id}:
+ *   put:
+ *     summary: Update net-zero alignment record
+ *     description: Updates an existing net-zero alignment record
+ *     tags: [Net-Zero]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The net-zero alignment record ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateNetZeroRequest'
+ *     responses:
+ *       200:
+ *         description: Successfully updated net-zero alignment record
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UpdateResponse'
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Record not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.put('/netzero/:id', async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    const data: UpdateNetZeroRequest = req.body;
+    
+    if (isNaN(id)) {
+      const errorResponse: ErrorResponse = {
+        success: false,
+        error: 'Invalid ID parameter',
+        timestamp: new Date().toISOString(),
+        path: req.path
+      };
+      return res.status(400).json(errorResponse);
+    }
+
+    const result = await DataService.updateNetZeroData(id, data);
+    
+    const response: UpdateResponse = {
+      success: true,
+      data: result,
+      timestamp: new Date().toISOString()
+    };
+    
+    res.json(response);
+  } catch (error) {
+    console.error('Error in PUT netzero endpoint:', error);
+    const errorResponse: ErrorResponse = {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString(),
+      path: req.path
+    };
+    res.status(500).json(errorResponse);
+  }
+});
+
+/**
+ * @swagger
+ * /api/netzero/{id}:
+ *   delete:
+ *     summary: Delete net-zero alignment record
+ *     description: Deletes an existing net-zero alignment record
+ *     tags: [Net-Zero]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The net-zero alignment record ID
+ *     responses:
+ *       200:
+ *         description: Successfully deleted net-zero alignment record
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/DeleteResponse'
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Record not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.delete('/netzero/:id', async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      const errorResponse: ErrorResponse = {
+        success: false,
+        error: 'Invalid ID parameter',
+        timestamp: new Date().toISOString(),
+        path: req.path
+      };
+      return res.status(400).json(errorResponse);
+    }
+
+    await DataService.deleteNetZeroData(id);
+    
+    const response: DeleteResponse = {
+      success: true,
+      message: 'Net-zero alignment record deleted successfully',
+      timestamp: new Date().toISOString()
+    };
+    
+    res.json(response);
+  } catch (error) {
+    console.error('Error in DELETE netzero endpoint:', error);
     const errorResponse: ErrorResponse = {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
