@@ -8,6 +8,7 @@ export type MixRow = {
 	solar_mw: number
 	nuclear_mw: number
 	fossil_mw: number
+	renewable_share_pct: number
 }
 export type NetZeroRow = { year: number; actual_emissions_mt: number; target_emissions_mt: number; alignment_pct: number }
 
