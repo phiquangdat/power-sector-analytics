@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { fetchCo2, fetchMix, Co2Row, MixRow } from '@/lib/fetch'
 import { ChartCO2 } from '@/components/ChartCO2'
 import { ChartMix } from '@/components/ChartMix'
