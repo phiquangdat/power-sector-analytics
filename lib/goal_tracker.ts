@@ -62,6 +62,15 @@ export function computeGoalTracker(
 
     const result: GoalTrackerData = {};
 
+    // Debug logging
+    console.log('Goal Tracker Debug:', {
+      co2DataLength: sortedCo2.length,
+      latestCo2: sortedCo2[sortedCo2.length - 1],
+      mixDataLength: sortedMix.length,
+      latestMix: sortedMix[sortedMix.length - 1],
+      netZeroDataLength: sortedNetZero.length
+    });
+
     // 1. Real-time Alignment Index (RAI)
     const currentCo2 = sortedCo2[sortedCo2.length - 1]?.co2_intensity_g_per_kwh;
     const currentYear = new Date().getFullYear();

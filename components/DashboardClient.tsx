@@ -22,6 +22,15 @@ export function DashboardClient() {
 				fetchNetZero(100)
 			]);
 			
+			// Debug logging
+			console.log('Fetched data:', {
+				co2Count: co2Data.length,
+				latestCo2: co2Data[co2Data.length - 1],
+				mixCount: mixData.length,
+				latestMix: mixData[mixData.length - 1],
+				netZeroCount: netZeroData.length
+			});
+			
 			setCo2(co2Data);
 			setMix(mixData);
 			setNetZero(netZeroData);
@@ -87,6 +96,25 @@ export function DashboardClient() {
 			</div>
 
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+				{/* Debug Info */}
+				<div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+					<h3 className="font-semibold text-yellow-800 mb-2">Debug Info (Latest Values)</h3>
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+						<div>
+							<strong>CO₂ Intensity:</strong> {co2.length > 0 ? co2[co2.length - 1]?.co2_intensity_g_per_kwh : 'N/A'} g/kWh
+						</div>
+						<div>
+							<strong>Renewable Share:</strong> {mix.length > 0 ? mix[mix.length - 1]?.renewable_share_pct : 'N/A'}%
+						</div>
+						<div>
+							<strong>Net-zero Alignment:</strong> {netZero.length > 0 ? netZero[netZero.length - 1]?.alignment_pct : 'N/A'}%
+						</div>
+					</div>
+					<div className="mt-2 text-xs text-yellow-700">
+						Data points: CO₂={co2.length}, Mix={mix.length}, NetZero={netZero.length}
+					</div>
+				</div>
+
 				{/* KPI Cards */}
 				<KPICards co2Data={co2} mixData={mix} netZeroData={netZero} />
 
