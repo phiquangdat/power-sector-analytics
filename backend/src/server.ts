@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 import healthRoutes from './routes/health';
 import apiRoutes from './routes/api';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { setupSwagger } from "./config/swagger";
 
 // Load environment variables
 dotenv.config();
@@ -60,22 +61,27 @@ app.use((req, res, next) => {
 app.use('/health', healthRoutes);
 app.use('/api', apiRoutes);
 
+// Swagger documentation
+setupSwagger(app);
+
 // Root endpoint
 app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: 'Sustainability Intelligence Dashboard API',
-    version: process.env.npm_package_version || '1.0.0',
+    message: "Sustainability Intelligence Dashboard API",
+    version: process.env.npm_package_version || "1.0.0",
     timestamp: new Date().toISOString(),
     endpoints: {
-      health: '/health',
-      co2: '/api/co2',
-      mix: '/api/mix',
-      netzero: '/api/netzero',
-      dashboard: '/api/dashboard',
-      co2Latest: '/api/co2/latest',
-      mixLatest: '/api/mix/latest'
-    }
+      health: "/health",
+      co2: "/api/co2",
+      mix: "/api/mix",
+      netzero: "/api/netzero",
+      dashboard: "/api/dashboard",
+      co2Latest: "/api/co2/latest",
+      mixLatest: "/api/mix/latest",
+      apiDocs: "/api-docs",
+      apiSpec: "/api-docs.json",
+    },
   });
 });
 
@@ -94,6 +100,8 @@ app.listen(PORT, () => {
   console.log(`   - Mix Data: http://localhost:${PORT}/api/mix`);
   console.log(`   - Net Zero: http://localhost:${PORT}/api/netzero`);
   console.log(`   - Dashboard: http://localhost:${PORT}/api/dashboard`);
+  console.log(`   - API Docs: http://localhost:${PORT}/api-docs`);
+  console.log(`   - API Spec: http://localhost:${PORT}/api-docs.json`);
 });
 
 // Graceful shutdown

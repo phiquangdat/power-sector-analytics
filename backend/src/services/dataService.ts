@@ -6,6 +6,11 @@ export class DataService {
    * Fetch CO2 intensity data
    */
   static async fetchCo2Data(limit: number = 96): Promise<Co2Row[]> {
+    if (!supabase) {
+      console.warn('Supabase not initialized, returning empty data');
+      return [];
+    }
+    
     try {
       const { data, error } = await supabase
         .from('co2_intensity')
@@ -28,6 +33,11 @@ export class DataService {
    * Fetch generation mix data
    */
   static async fetchMixData(limit: number = 96): Promise<MixRow[]> {
+    if (!supabase) {
+      console.warn('Supabase not initialized, returning empty data');
+      return [];
+    }
+    
     try {
       const { data, error } = await supabase
         .from('generation_mix')
@@ -50,6 +60,11 @@ export class DataService {
    * Fetch net-zero alignment data
    */
   static async fetchNetZeroData(limit: number = 100): Promise<NetZeroRow[]> {
+    if (!supabase) {
+      console.warn('Supabase not initialized, returning empty data');
+      return [];
+    }
+    
     try {
       const { data, error } = await supabase
         .from('netzero_alignment')
@@ -94,6 +109,11 @@ export class DataService {
    * Get latest CO2 intensity value
    */
   static async getLatestCo2Intensity(): Promise<Co2Row | null> {
+    if (!supabase) {
+      console.warn('Supabase not initialized, returning null');
+      return null;
+    }
+    
     try {
       const { data, error } = await supabase
         .from('co2_intensity')
@@ -117,6 +137,11 @@ export class DataService {
    * Get latest generation mix data
    */
   static async getLatestMixData(): Promise<MixRow | null> {
+    if (!supabase) {
+      console.warn('Supabase not initialized, returning null');
+      return null;
+    }
+    
     try {
       const { data, error } = await supabase
         .from('generation_mix')

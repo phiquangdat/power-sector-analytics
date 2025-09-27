@@ -5,7 +5,37 @@ import { HealthCheckResponse } from '../types';
 const router = Router();
 
 /**
- * Health check endpoint
+ * @swagger
+ * /health:
+ *   get:
+ *     summary: Health check endpoint
+ *     description: Returns the current health status of the API server and database connectivity
+ *     tags: [Health]
+ *     responses:
+ *       200:
+ *         description: Server is healthy and database is connected
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/HealthCheckResponse'
+ *             example:
+ *               status: "healthy"
+ *               timestamp: "2024-01-01T00:00:00.000Z"
+ *               uptime: 3600
+ *               version: "1.0.0"
+ *               database: "connected"
+ *       503:
+ *         description: Server is unhealthy or database is disconnected
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/HealthCheckResponse'
+ *             example:
+ *               status: "unhealthy"
+ *               timestamp: "2024-01-01T00:00:00.000Z"
+ *               uptime: 3600
+ *               version: "1.0.0"
+ *               database: "disconnected"
  */
 router.get('/', async (req: Request, res: Response) => {
   try {

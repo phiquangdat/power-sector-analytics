@@ -7,6 +7,7 @@ A Node.js/Express backend API for the Sustainability Intelligence Dashboard, pro
 - **Real-time Data API**: Endpoints for CO2 intensity, generation mix, and net-zero alignment data
 - **Supabase Integration**: Connects to Supabase database for data storage
 - **TypeScript**: Full TypeScript support with type safety
+- **API Documentation**: Interactive Swagger UI with OpenAPI 3.0 specification
 - **Security**: Helmet, CORS, rate limiting, and input validation
 - **Error Handling**: Comprehensive error handling and logging
 - **Health Checks**: Built-in health monitoring endpoints
@@ -24,6 +25,10 @@ A Node.js/Express backend API for the Sustainability Intelligence Dashboard, pro
 - `GET /api/dashboard` - All dashboard data in one request
 - `GET /api/co2/latest` - Latest CO2 intensity value
 - `GET /api/mix/latest` - Latest generation mix data
+
+### Documentation
+- `GET /api-docs` - Interactive Swagger UI documentation
+- `GET /api-docs.json` - OpenAPI specification in JSON format
 
 ### Query Parameters
 - `limit`: Number of data points to return (applies to time-series data)
@@ -118,6 +123,19 @@ npm run dev
 ```
 
 The server will start on `http://localhost:3001` with hot reload enabled.
+
+### API Documentation
+
+Once the server is running, you can access the interactive API documentation at:
+- **Swagger UI**: http://localhost:3001/api-docs
+- **OpenAPI Spec**: http://localhost:3001/api-docs.json
+
+The Swagger UI provides:
+- Interactive API testing
+- Request/response examples
+- Schema definitions
+- Parameter descriptions
+- Error response documentation
 
 ### Build for Production
 ```bash
