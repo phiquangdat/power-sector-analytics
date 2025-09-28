@@ -4,9 +4,11 @@ import {
   fetchCo2,
   fetchMix,
   fetchNetZero,
+  fetchForecasts,
   Co2Row,
   MixRow,
   NetZeroRow,
+  ForecastRow,
 } from "@/lib/fetch";
 import { ChartCO2 } from "@/components/ChartCO2";
 import { ChartMix } from "@/components/ChartMix";
@@ -31,6 +33,7 @@ export function DashboardClient({
   const [co2, setCo2] = useState<Co2Row[]>(initialCo2);
   const [mix, setMix] = useState<MixRow[]>(initialMix);
   const [netZero, setNetZero] = useState<NetZeroRow[]>(initialNetZero);
+  const [forecasts, setForecasts] = useState<ForecastRow[]>([]);
   const [loading, setLoading] = useState(
     initialCo2.length === 0 &&
       initialMix.length === 0 &&
@@ -51,10 +54,11 @@ export function DashboardClient({
 
   const fetchData = async () => {
     try {
-      const [co2Data, mixData, netZeroData] = await Promise.all([
+      const [co2Data, mixData, netZeroData, forecastData] = await Promise.all([
         fetchCo2(96),
         fetchMix(96),
         fetchNetZero(100),
+        fetchForecasts(96),
       ]);
 
       // Debug logging
@@ -69,6 +73,7 @@ export function DashboardClient({
       setCo2(co2Data);
       setMix(mixData);
       setNetZero(netZeroData);
+      setForecasts(forecastData);
       setLastUpdate(new Date());
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -252,7 +257,12 @@ export function DashboardClient({
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* KPI Cards */}
-        <KPICards co2Data={co2} mixData={mix} netZeroData={netZero} />
+        <KPICards
+          co2Data={co2}
+          mixData={mix}
+          netZeroData={netZero}
+          goalTrackerData={goalTrackerData}
+        />
 
         {/* Goal Tracker Section */}
         {!goalTrackerData.error && (
@@ -275,7 +285,11 @@ export function DashboardClient({
                 disclosures and operational decarbonization tracking.
               </p>
             </div>
-            <ChartCO2 points={co2} />
+            <ChartCO2
+              points={co2}
+              anomalies={goalTrackerData.anomalies?.recent || []}
+              forecasts={forecasts}
+            />
             <div className="mt-4 p-4 bg-blue-50 rounded-lg">
               <details className="group">
                 <summary className="cursor-pointer text-sm font-medium text-gray-900 hover:text-blue-600">

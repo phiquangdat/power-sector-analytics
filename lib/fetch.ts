@@ -1,56 +1,81 @@
-import { supabase } from './supabase'
+import { supabase } from "./supabase";
 
-export type Co2Row = { timestamp: string; co2_intensity_g_per_kwh: number }
+export type Co2Row = { timestamp: string; co2_intensity_g_per_kwh: number };
 export type MixRow = {
-	timestamp: string
-	hydro_mw: number
-	wind_mw: number
-	solar_mw: number
-	nuclear_mw: number
-	fossil_mw: number
-	renewable_share_pct: number
-}
-export type NetZeroRow = { year: number; actual_emissions_mt: number; target_emissions_mt: number; alignment_pct: number }
+  timestamp: string;
+  hydro_mw: number;
+  wind_mw: number;
+  solar_mw: number;
+  nuclear_mw: number;
+  fossil_mw: number;
+  renewable_share_pct: number;
+};
+export type NetZeroRow = {
+  year: number;
+  actual_emissions_mt: number;
+  target_emissions_mt: number;
+  alignment_pct: number;
+};
+export type ForecastRow = {
+  timestamp: string;
+  co2_intensity_g_per_kwh: number;
+  forecast_type: string;
+  forecast_horizon_hours: number;
+  created_at: string;
+};
 
 export async function fetchCo2(limit = 96): Promise<Co2Row[]> {
-	if (!supabase) {
-		console.warn('Supabase not initialized, returning empty data')
-		return []
-	}
-	const { data, error } = await supabase
-		.from('co2_intensity')
-		.select('*')
-		.order('timestamp', { ascending: false })
-		.limit(limit)
-	if (error) throw error
-	return ((data ?? []) as Co2Row[]).reverse()
+  if (!supabase) {
+    console.warn("Supabase not initialized, returning empty data");
+    return [];
+  }
+  const { data, error } = await supabase
+    .from("co2_intensity")
+    .select("*")
+    .order("timestamp", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return ((data ?? []) as Co2Row[]).reverse();
 }
 
 export async function fetchMix(limit = 96): Promise<MixRow[]> {
-	if (!supabase) {
-		console.warn('Supabase not initialized, returning empty data')
-		return []
-	}
-	const { data, error } = await supabase
-		.from('generation_mix')
-		.select('*')
-		.order('timestamp', { ascending: false })
-		.limit(limit)
-	if (error) throw error
-	return ((data ?? []) as MixRow[]).reverse()
+  if (!supabase) {
+    console.warn("Supabase not initialized, returning empty data");
+    return [];
+  }
+  const { data, error } = await supabase
+    .from("generation_mix")
+    .select("*")
+    .order("timestamp", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return ((data ?? []) as MixRow[]).reverse();
 }
 
 export async function fetchNetZero(limit = 100): Promise<NetZeroRow[]> {
-	if (!supabase) {
-		console.warn('Supabase not initialized, returning empty data')
-		return []
-	}
-	const { data, error } = await supabase
-		.from('netzero_alignment')
-		.select('*')
-		.order('year', { ascending: true })
-		.limit(limit)
-	if (error) throw error
-	return (data ?? []) as NetZeroRow[]
+  if (!supabase) {
+    console.warn("Supabase not initialized, returning empty data");
+    return [];
+  }
+  const { data, error } = await supabase
+    .from("netzero_alignment")
+    .select("*")
+    .order("year", { ascending: true })
+    .limit(limit);
+  if (error) throw error;
+  return (data ?? []) as NetZeroRow[];
 }
 
+export async function fetchForecasts(limit = 96): Promise<ForecastRow[]> {
+  if (!supabase) {
+    console.warn("Supabase not initialized, returning empty data");
+    return [];
+  }
+  const { data, error } = await supabase
+    .from("co2_forecasts")
+    .select("*")
+    .order("timestamp", { ascending: true })
+    .limit(limit);
+  if (error) throw error;
+  return (data ?? []) as ForecastRow[];
+}
