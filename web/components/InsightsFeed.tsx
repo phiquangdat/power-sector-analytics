@@ -41,7 +41,7 @@ export function InsightsFeed({ dashboardData }: InsightsFeedProps) {
   const loadInsights = async () => {
     setLoading(true);
     try {
-      const response = await fetchInsights();
+      const response = await fetchInsights() as any;
       setData(response);
     } catch (error) {
       console.error("Failed to load insights:", error);
