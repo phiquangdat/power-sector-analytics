@@ -1,31 +1,32 @@
 {
   "name": "power-sector-analytics",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "Nexus - Sustainability Intelligence Platform for Power Sector Analytics",
   "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.58.0",
-    "next": "15.5.4",
-    "plotly.js": "^3.1.0",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "react-plotly.js": "^2.6.0"
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && python -m uvicorn api.index:app --reload",
+    "build": "npm run build:frontend",
+    "build:frontend": "cd frontend && npm run build",
+    "start": "cd frontend && npm start",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && pip install -r requirements.txt"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@types/react-plotly.js": "^2.6.3",
-    "eslint": "^9",
-    "eslint-config-next": "15.5.4",
-    "tailwindcss": "^4",
-    "typescript": "^5"
-  }
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "sustainability",
+    "power-sector",
+    "analytics",
+    "net-zero",
+    "carbon-emissions",
+    "energy-transition"
+  ],
+  "author": "phiquangdat",
+  "license": "MIT"
 }

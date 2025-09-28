@@ -1,36 +1,164 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Power Sector Analytics - Nexus Platform
 
-## Getting Started
+A comprehensive sustainability intelligence platform for electricity and heat generation companies, designed to help utilities and energy providers remain compliant and gain competitive advantage in the energy market.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Real-time CO₂ Intensity Tracking**: Monitor carbon emissions per unit electricity generated
+- **Generation Mix Analysis**: Track electricity generation by source (hydro, wind, solar, nuclear, fossil)
+- **Net-Zero Alignment**: Monitor progress against 2050 net-zero targets
+- **Compliance Reporting**: Automated sustainability reporting for regulatory requirements
+- **Scenario Modeling**: Plan and model different decarbonization pathways
+- **Goal Tracking**: Set and monitor sustainability goals with real-time progress
+
+## 📁 Project Structure
+
+```
+power-sector-analytics/
+├── frontend/                 # Next.js web application
+│   ├── app/                  # Next.js app router pages
+│   ├── components/           # React components
+│   ├── lib/                  # Utility functions and configurations
+│   └── public/               # Static assets
+├── backend/                  # Python backend services
+│   ├── api/                  # FastAPI endpoints
+│   ├── analysis/             # Data analysis modules
+│   ├── simulator/            # Energy simulation engine
+│   └── streamlit_app/        # Streamlit dashboard
+├── data/                     # CSV datasets and sample data
+├── database/                 # Database schemas and migrations
+│   └── supabase/             # Supabase SQL files
+├── scripts/                  # Utility and simulation scripts
+├── docs/                     # Documentation and business case
+├── deployment/               # Deployment configurations
+└── README.md
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Technology Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Frontend
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Utility-first CSS framework
+- **Plotly.js** - Interactive data visualization
+- **Supabase** - Backend-as-a-Service
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Backend
+- **Python 3.9+** - Core backend language
+- **FastAPI** - Modern, fast web framework
+- **Streamlit** - Data dashboard framework
+- **Pandas** - Data manipulation and analysis
+- **NumPy** - Numerical computing
 
-## Learn More
+### Database & Infrastructure
+- **Supabase** - PostgreSQL database with real-time features
+- **Render** - Cloud deployment platform
 
-To learn more about Next.js, take a look at the following resources:
+## 🚀 Quick Start
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Prerequisites
+- Node.js 18+ and npm
+- Python 3.9+
+- Git
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Installation
 
-## Deploy on Vercel
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/phiquangdat/power-sector-analytics.git
+   cd power-sector-analytics
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. **Install all dependencies**
+   ```bash
+   npm run install:all
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. **Set up environment variables**
+   ```bash
+   # Copy example environment files
+   cp frontend/.env.example frontend/.env.local
+   cp backend/.env.example backend/.env
+   ```
+
+4. **Start development servers**
+   ```bash
+   npm run dev
+   ```
+
+This will start:
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- Streamlit Dashboard: http://localhost:8501
+
+## 📊 Key Metrics
+
+The platform tracks several critical sustainability metrics:
+
+- **CO₂ Intensity (g/kWh)**: Carbon emitted per unit electricity generated
+- **Generation Mix (MW)**: Electricity generated by source over time
+- **Renewable Share (%)**: Percentage of total generation from renewables
+- **Net-Zero Alignment (%)**: Annual progress vs target emissions pathway
+- **Real-time Alignment Index (RAI)**: Current carbon intensity vs target
+- **YTD Carbon Budget**: Cumulative emissions vs year-to-date budget
+- **Decarbonization Velocity**: Rate of intensity decline vs required rate
+
+## 🎯 Use Cases
+
+- **Independent Power Producers**: Track and report sustainability metrics
+- **Industrial Heat Generation**: Monitor district heating sustainability
+- **Energy Consultants**: Provide clients with comprehensive analytics
+- **Regulatory Compliance**: Meet EU ETS, CSRD, and IRA requirements
+
+## 📈 Business Value
+
+- **Access to Capital**: Meet sustainability financing requirements
+- **Brand Trust**: Transparent reporting builds public and regulatory trust
+- **Compliance Efficiency**: Reduce manual reporting by 70%
+- **Strategic Planning**: Focus on decarbonization rather than data collection
+
+## 🔧 Development
+
+### Frontend Development
+```bash
+cd frontend
+npm run dev
+```
+
+### Backend Development
+```bash
+cd backend
+python -m uvicorn api.index:app --reload
+```
+
+### Running Simulations
+```bash
+cd scripts
+python simulate.py
+python forecast.py
+```
+
+## 📚 Documentation
+
+- [Business Case](docs/BUSINESS_CASE.md) - Executive summary and market analysis
+- [Metrics Reference](docs/METRICS.md) - Detailed explanation of all metrics
+- [Project Steps](docs/PROJECT_STEPS.md) - Development roadmap
+- [Deployment Guide](docs/RENDER_DEPLOYMENT_INSTRUCTIONS.md) - Production deployment
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built for the energy transition and net-zero goals
+- Designed to support EU Green Deal and US IRA compliance
+- Inspired by the need for transparent sustainability reporting in the power sector
