@@ -17,7 +17,12 @@ from simulator.simulate import simulate_generation_mix, simulate_co2_intensity, 
 from analysis.goal_tracker import compute_goal_tracker
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000"], supports_credentials=True)
+CORS(app, origins=[
+    "http://localhost:3000",
+    "https://new-vercel-app.vercel.app",
+    "https://new-vercel-app-git-main-phiquangdat.vercel.app",
+    "https://*.vercel.app"
+], supports_credentials=True)
 
 # Initialize Flask-RESTX API with enhanced Swagger UI
 api = Api(
