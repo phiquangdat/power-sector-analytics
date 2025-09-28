@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:5000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:5002";
 
 export interface Co2Row {
   timestamp: string;
@@ -52,11 +52,11 @@ async function apiFetch<T>(endpoint: string): Promise<T> {
   }
 }
 
-export const fetchCo2 = (limit = 96) => apiFetch<Co2Row[]>("/api/co2");
-export const fetchMix = (limit = 96) => apiFetch<MixRow[]>("/api/mix");
+export const fetchCo2 = (limit = 96) => apiFetch<Co2Row[]>("/api/co2/");
+export const fetchMix = (limit = 96) => apiFetch<MixRow[]>("/api/mix/");
 export const fetchNetZero = (limit = 100) =>
-  apiFetch<NetZeroRow[]>("/api/netzero");
-export const fetchGoalTracker = () => apiFetch("/api/goal_tracker");
-export const fetchDashboard = () => apiFetch("/api/dashboard");
+  apiFetch<NetZeroRow[]>("/api/netzero/");
+export const fetchGoalTracker = () => apiFetch("/api/analytics/goal_tracker");
+export const fetchDashboard = () => apiFetch("/api/analytics/dashboard");
 export const fetchForecasts = (limit = 96) =>
   apiFetch<ForecastRow[]>("/api/forecasts");

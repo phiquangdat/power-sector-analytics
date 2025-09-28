@@ -12,11 +12,11 @@ from typing import List, Dict, Any
 # This allows us to import our simulator and analysis modules
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from simulator.simulate import run_once, _now_tz, SimulatorConfig
+from simulator.simulate import simulate_generation_mix, simulate_co2_intensity, _now_tz, SimulatorConfig
 from analysis.goal_tracker import compute_goal_tracker
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["http://localhost:3000"], supports_credentials=True)
 
 # Initialize Flask-RESTX API
 api = Api(
@@ -115,7 +115,15 @@ def generate_live_data(periods=96, freq='15min'):
     anchor = _now_tz(cfg.timezone)
     timestamps = pd.to_datetime(pd.date_range(end=anchor, periods=periods, freq=freq))
     
-    records = [run_once(cfg, ts) for ts in timestamps]
+    # Generate records using the correct simulation functions
+    mix_records = []
+    co2_records = []
+    
+    for ts in timestamps:
+        gen_record = simulate_generation_mix(ts)
+        co2_record = simulate_co2_intensity(ts, gen_record)
+        mix_records.append(gen_record)
+        co2_records.append(co2_record)
     
     # Convert records to DataFrames for easier manipulation
     df_mix = pd.DataFrame([{
@@ -127,13 +135,13 @@ def generate_live_data(periods=96, freq='15min'):
         "fossil_mw": r.fossil_mw,
         "total_mw": r.total_mw,
         "renewable_share_pct": r.renewable_share_pct,
-        "co2_intensity_g_per_kwh": r.co2_intensity_g_per_kwh
-    } for r in records])
+        "co2_intensity_g_per_kwh": co2_records[i].co2_intensity_g_per_kwh
+    } for i, r in enumerate(mix_records)])
     
     df_co2 = pd.DataFrame([{
         "timestamp": r.timestamp.isoformat(),
         "co2_intensity_g_per_kwh": r.co2_intensity_g_per_kwh
-    } for r in records])
+    } for r in co2_records])
 
     return df_co2, df_mix
 
@@ -253,9 +261,9 @@ class GoalTracker(Resource):
             
             # Use your existing goal tracker logic
             goal_data = compute_goal_tracker(
-                df_co2.to_dict(orient='records'), 
-                df_mix.to_dict(orient='records'), 
-                df_netzero.to_dict(orient='records')
+                df_co2, 
+                df_mix, 
+                df_netzero
             )
             return goal_data
         except Exception as e:
@@ -281,9 +289,9 @@ class Dashboard(Resource):
             # Get goal tracker data with more historical data
             df_co2_extended, df_mix_extended = generate_live_data(periods=720)
             goal_data = compute_goal_tracker(
-                df_co2_extended.to_dict(orient='records'), 
-                df_mix_extended.to_dict(orient='records'), 
-                df_netzero.to_dict(orient='records')
+                df_co2_extended, 
+                df_mix_extended, 
+                df_netzero
             )
             
             return {
