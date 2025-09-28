@@ -1238,5 +1238,15 @@ class InsightsFeed(Resource):
 
 if __name__ == '__main__':
     import os
+    import logging
+    
+    # Configure logging for production
+    if not app.debug:
+        handler = logging.StreamHandler()
+        handler.setLevel(logging.INFO)
+        app.logger.addHandler(handler)
+        app.logger.setLevel(logging.INFO)
+        app.logger.info('Nexus Sustainability API startup')
+    
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
