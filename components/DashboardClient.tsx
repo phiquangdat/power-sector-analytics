@@ -122,9 +122,15 @@ export function DashboardClient() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Scenario Modeler */}
           <ScenarioModeler />
-          
+
           {/* Insights Feed */}
-          <InsightsFeed />
+          <InsightsFeed
+            dashboardData={{
+              co2Data: co2,
+              mixData: mix,
+              netZeroData: netZero,
+            }}
+          />
         </div>
 
         {/* Goal Tracker Section */}
