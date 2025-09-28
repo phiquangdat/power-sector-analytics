@@ -26,7 +26,7 @@ export function ChartCO2({
     const loadForecast = async () => {
       setLoading(true);
       try {
-        const response = await fetchCo2Forecast();
+        const response = await fetchCo2Forecast() as any;
         setForecastData(response.forecast || []);
       } catch (error) {
         console.error("Failed to load forecast:", error);
