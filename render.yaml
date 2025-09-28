@@ -5,6 +5,28 @@ services:
     plan: starter
     buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn api.index:app --bind 0.0.0.0:$PORT"
+    ignorePaths:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "public/**"
+      - "web/**"
+      - "*.md"
+      - "*.json"
+      - "*.js"
+      - "*.ts"
+      - "*.tsx"
+      - "*.css"
+      - "*.scss"
+      - "node_modules/**"
+      - ".next/**"
+      - "vercel.json"
+      - "next.config.ts"
+      - "tsconfig.json"
+      - "postcss.config.mjs"
+      - "eslint.config.mjs"
+      - "package.json"
+      - "package-lock.json"
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.18

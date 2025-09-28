@@ -1,0 +1,31 @@
+# Frontend files - ignore for backend deployment
+app/
+components/
+lib/
+public/
+web/
+*.md
+*.json
+*.js
+*.ts
+*.tsx
+*.css
+*.scss
+node_modules/
+.next/
+vercel.json
+next.config.ts
+tsconfig.json
+postcss.config.mjs
+eslint.config.mjs
+package.json
+package-lock.json
+
+# Keep only backend files
+!api/
+!simulator/
+!analysis/
+!scripts/
+!requirements.txt
+!Procfile
+!runtime.txt
