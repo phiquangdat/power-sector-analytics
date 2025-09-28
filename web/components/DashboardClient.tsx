@@ -5,6 +5,8 @@ import { ChartCO2 } from '@/components/ChartCO2'
 import { ChartMix } from '@/components/ChartMix'
 import { KPICards } from '@/components/KPICards'
 import { GoalTracker } from '@/components/GoalTracker'
+import { ScenarioModeler } from '@/components/ScenarioModeler'
+import { InsightsFeed } from '@/components/InsightsFeed'
 import { computeGoalTracker } from '@/lib/goal_tracker'
 
 export function DashboardClient() {
@@ -155,6 +157,15 @@ export function DashboardClient() {
           netZeroData={netZero}
           goalTrackerData={goalTrackerData}
         />
+
+        {/* Intelligence Features Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Scenario Modeler */}
+          <ScenarioModeler />
+          
+          {/* Insights Feed */}
+          <InsightsFeed />
+        </div>
 
         {/* Goal Tracker Section */}
         {!goalTrackerData.error && (

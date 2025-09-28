@@ -60,3 +60,23 @@ export const fetchGoalTracker = () => apiFetch("/api/analytics/goal_tracker");
 export const fetchDashboard = () => apiFetch("/api/analytics/dashboard");
 export const fetchForecasts = (limit = 96) =>
   apiFetch<ForecastRow[]>("/api/forecasts");
+
+// New intelligence features
+export const fetchCo2Forecast = () => apiFetch("/api/forecast/co2");
+export const runScenario = (params: {
+  solar_boost?: number;
+  wind_boost?: number;
+  fossil_reduction?: number;
+  nuclear_outage?: boolean;
+  duration_hours?: number;
+}) => {
+  const searchParams = new URLSearchParams();
+  if (params.solar_boost !== undefined) searchParams.set('solar_boost', params.solar_boost.toString());
+  if (params.wind_boost !== undefined) searchParams.set('wind_boost', params.wind_boost.toString());
+  if (params.fossil_reduction !== undefined) searchParams.set('fossil_reduction', params.fossil_reduction.toString());
+  if (params.nuclear_outage !== undefined) searchParams.set('nuclear_outage', params.nuclear_outage.toString());
+  if (params.duration_hours !== undefined) searchParams.set('duration_hours', params.duration_hours.toString());
+  
+  return apiFetch(`/api/scenario/?${searchParams.toString()}`);
+};
+export const fetchInsights = () => apiFetch("/api/insights/");

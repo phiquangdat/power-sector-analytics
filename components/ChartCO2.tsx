@@ -2,7 +2,8 @@
 import dynamic from "next/dynamic";
 const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
 import { AnomalyData } from "@/lib/goal_tracker";
-import { ForecastRow } from "@/lib/fetch";
+import { ForecastRow, fetchCo2Forecast } from "@/lib/fetch";
+import { useEffect, useState } from "react";
 
 type Point = { timestamp: string; co2_intensity_g_per_kwh: number };
 
@@ -17,6 +18,28 @@ export function ChartCO2({
   anomalies = [],
   forecasts = [],
 }: ChartCO2Props) {
+  const [forecastData, setForecastData] = useState<ForecastRow[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch forecast data on component mount
+  useEffect(() => {
+    const loadForecast = async () => {
+      setLoading(true);
+      try {
+        const response = await fetchCo2Forecast();
+        setForecastData(response.forecast || []);
+      } catch (error) {
+        console.error("Failed to load forecast:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadForecast();
+  }, []);
+
+  // Use provided forecasts or fetched forecast data
+  const displayForecasts = forecasts.length > 0 ? forecasts : forecastData;
   // Create anomaly data for plotting
   const anomalyPoints = anomalies.map((anomaly) => ({
     x: anomaly.timestamp,
@@ -95,10 +118,10 @@ export function ChartCO2({
   }
 
   // Add forecast trace if forecasts exist
-  if (forecasts.length > 0) {
+  if (displayForecasts.length > 0) {
     traces.push({
-      x: forecasts.map((f) => f.timestamp),
-      y: forecasts.map((f) => f.co2_intensity_g_per_kwh),
+      x: displayForecasts.map((f) => f.timestamp),
+      y: displayForecasts.map((f) => f.co2_intensity_g_per_kwh),
       type: "scatter",
       mode: "lines",
       line: {
@@ -119,7 +142,7 @@ export function ChartCO2({
         yaxis: { title: { text: "gCO₂/kWh" } },
         autosize: true,
         margin: { l: 50, r: 20, t: 40, b: 40 },
-        showlegend: anomalyPoints.length > 0 || forecasts.length > 0,
+        showlegend: anomalyPoints.length > 0 || displayForecasts.length > 0,
         legend: {
           x: 0.02,
           y: 0.98,
