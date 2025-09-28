@@ -21,8 +21,9 @@ CORS(app, origins=[
     "http://localhost:3000",
     "https://new-vercel-app.vercel.app",
     "https://new-vercel-app-git-main-phiquangdat.vercel.app",
+    "https://new-vercel-app-tau.vercel.app",
     "https://*.vercel.app"
-], supports_credentials=True)
+], supports_credentials=True, allow_headers=["Content-Type", "Authorization"], methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
 # Initialize Flask-RESTX API with enhanced Swagger UI
 api = Api(
