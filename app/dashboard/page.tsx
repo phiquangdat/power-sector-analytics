@@ -13,7 +13,7 @@ export default async function DashboardPage() {
   let initialCo2: Co2Row[] = [];
   let initialMix: MixRow[] = [];
   let initialNetZero: NetZeroRow[] = [];
-  let hasError = false;
+  let serverError: string | null = null;
 
   try {
     const [co2Data, mixData, netZeroData] = await Promise.all([
@@ -26,8 +26,8 @@ export default async function DashboardPage() {
     initialMix = mixData;
     initialNetZero = netZeroData;
   } catch (error) {
-    console.error("Error fetching initial data on server:", error);
-    hasError = true;
+    console.error("Server-side data fetch error:", error);
+    serverError = "Failed to load initial data";
   }
 
   return (
@@ -35,7 +35,7 @@ export default async function DashboardPage() {
       initialCo2={initialCo2}
       initialMix={initialMix}
       initialNetZero={initialNetZero}
-      hasError={hasError}
+      serverError={serverError}
     />
   );
 }

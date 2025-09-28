@@ -1,72 +1,222 @@
 "use client";
-import { useState, useEffect } from 'react';
-import { fetchCo2, fetchMix, fetchNetZero, Co2Row, MixRow, NetZeroRow } from '@/lib/fetch'
-import { ChartCO2 } from '@/components/ChartCO2'
-import { ChartMix } from '@/components/ChartMix'
-import { KPICards } from '@/components/KPICards'
-import { GoalTracker } from '@/components/GoalTracker'
-import { computeGoalTracker } from '@/lib/goal_tracker'
+import { useState, useEffect, useRef } from "react";
+import {
+  fetchCo2,
+  fetchMix,
+  fetchNetZero,
+  Co2Row,
+  MixRow,
+  NetZeroRow,
+} from "@/lib/fetch";
+import { ChartCO2 } from "@/components/ChartCO2";
+import { ChartMix } from "@/components/ChartMix";
+import { KPICards } from "@/components/KPICards";
+import { GoalTracker } from "@/components/GoalTracker";
+import { computeGoalTracker } from "@/lib/goal_tracker";
+import { supabase } from "@/lib/supabase";
 
-export function DashboardClient() {
-	const [co2, setCo2] = useState<Co2Row[]>([]);
-	const [mix, setMix] = useState<MixRow[]>([]);
-	const [netZero, setNetZero] = useState<NetZeroRow[]>([]);
-	const [loading, setLoading] = useState(true);
-	const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+interface DashboardClientProps {
+  initialCo2?: Co2Row[];
+  initialMix?: MixRow[];
+  initialNetZero?: NetZeroRow[];
+  serverError?: string | null;
+}
 
-	const fetchData = async () => {
-		try {
-			const [co2Data, mixData, netZeroData] = await Promise.all([
-				fetchCo2(96), 
-				fetchMix(96),
-				fetchNetZero(100)
-			]);
-			
-			// Debug logging
-			console.log('Fetched data:', {
-				co2Count: co2Data.length,
-				latestCo2: co2Data[co2Data.length - 1],
-				mixCount: mixData.length,
-				latestMix: mixData[mixData.length - 1],
-				netZeroCount: netZeroData.length
-			});
-			
-			setCo2(co2Data);
-			setMix(mixData);
-			setNetZero(netZeroData);
-			setLastUpdate(new Date());
-		} catch (error) {
-			console.error('Error fetching data:', error);
-		} finally {
-			setLoading(false);
-		}
-	};
+export function DashboardClient({
+  initialCo2 = [],
+  initialMix = [],
+  initialNetZero = [],
+  serverError = null,
+}: DashboardClientProps) {
+  const [co2, setCo2] = useState<Co2Row[]>(initialCo2);
+  const [mix, setMix] = useState<MixRow[]>(initialMix);
+  const [netZero, setNetZero] = useState<NetZeroRow[]>(initialNetZero);
+  const [loading, setLoading] = useState(
+    initialCo2.length === 0 &&
+      initialMix.length === 0 &&
+      initialNetZero.length === 0
+  );
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
-	useEffect(() => {
-		// Initial data fetch
-		fetchData();
-		
-		// Set up interval to fetch data every 10 seconds
-		const interval = setInterval(fetchData, 10000);
-		
-		return () => clearInterval(interval);
-	}, []);
+  // Refs to store subscription objects for cleanup
+  const co2Subscription = useRef<ReturnType<
+    NonNullable<typeof supabase>["channel"]
+  > | null>(null);
+  const mixSubscription = useRef<ReturnType<
+    NonNullable<typeof supabase>["channel"]
+  > | null>(null);
+  const netZeroSubscription = useRef<ReturnType<
+    NonNullable<typeof supabase>["channel"]
+  > | null>(null);
 
-	// Compute goal tracker metrics
-	const goalTrackerData = computeGoalTracker(co2, mix, netZero);
+  const fetchData = async () => {
+    try {
+      const [co2Data, mixData, netZeroData] = await Promise.all([
+        fetchCo2(96),
+        fetchMix(96),
+        fetchNetZero(100),
+      ]);
 
-	if (loading) {
-		return (
-			<div className="min-h-screen bg-gray-50 flex items-center justify-center">
-				<div className="text-center">
-					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-					<p className="text-gray-600">Loading real-time data...</p>
-				</div>
-			</div>
-		);
-	}
+      // Debug logging
+      console.log("Fetched data:", {
+        co2Count: co2Data.length,
+        latestCo2: co2Data[co2Data.length - 1],
+        mixCount: mixData.length,
+        latestMix: mixData[mixData.length - 1],
+        netZeroCount: netZeroData.length,
+      });
 
-	return (
+      setCo2(co2Data);
+      setMix(mixData);
+      setNetZero(netZeroData);
+      setLastUpdate(new Date());
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Set up real-time subscriptions
+  const setupSubscriptions = () => {
+    if (!supabase) {
+      console.warn(
+        "Supabase not initialized, skipping real-time subscriptions"
+      );
+      return;
+    }
+
+    // CO2 intensity subscription
+    co2Subscription.current = supabase
+      .channel("co2_intensity_changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "co2_intensity",
+        },
+        (payload) => {
+          console.log("New CO2 data received:", payload.new);
+          // Fetch fresh data when new record is inserted
+          fetchCo2(96).then(setCo2).catch(console.error);
+          setLastUpdate(new Date());
+        }
+      )
+      .subscribe();
+
+    // Generation mix subscription
+    mixSubscription.current = supabase
+      .channel("generation_mix_changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "generation_mix",
+        },
+        (payload) => {
+          console.log("New generation mix data received:", payload.new);
+          // Fetch fresh data when new record is inserted
+          fetchMix(96).then(setMix).catch(console.error);
+          setLastUpdate(new Date());
+        }
+      )
+      .subscribe();
+
+    // Net zero alignment subscription
+    netZeroSubscription.current = supabase
+      .channel("netzero_alignment_changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*", // Listen to all changes (INSERT, UPDATE, DELETE)
+          schema: "public",
+          table: "netzero_alignment",
+        },
+        (payload) => {
+          console.log("Net zero alignment data changed:", payload);
+          // Fetch fresh data when any change occurs
+          fetchNetZero(100).then(setNetZero).catch(console.error);
+          setLastUpdate(new Date());
+        }
+      )
+      .subscribe();
+  };
+
+  // Cleanup subscriptions
+  const cleanupSubscriptions = () => {
+    if (co2Subscription.current) {
+      supabase?.removeChannel(co2Subscription.current);
+      co2Subscription.current = null;
+    }
+    if (mixSubscription.current) {
+      supabase?.removeChannel(mixSubscription.current);
+      mixSubscription.current = null;
+    }
+    if (netZeroSubscription.current) {
+      supabase?.removeChannel(netZeroSubscription.current);
+      netZeroSubscription.current = null;
+    }
+  };
+
+  useEffect(() => {
+    // Only fetch data if we don't have initial data from server
+    if (
+      initialCo2.length === 0 &&
+      initialMix.length === 0 &&
+      initialNetZero.length === 0
+    ) {
+      fetchData();
+    } else {
+      // We have server data, so we're not loading
+      setLoading(false);
+    }
+
+    // Set up real-time subscriptions
+    setupSubscriptions();
+
+    // Set up interval to fetch data every 10 seconds as fallback
+    const interval = setInterval(fetchData, 10000);
+
+    return () => {
+      clearInterval(interval);
+      cleanupSubscriptions();
+    };
+  }, [initialCo2.length, initialMix.length, initialNetZero.length]);
+
+  // Compute goal tracker metrics
+  const goalTrackerData = computeGoalTracker(co2, mix, netZero);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading real-time data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (serverError) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-600 text-xl mb-4">⚠️</div>
+          <p className="text-red-600 mb-4">{serverError}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
