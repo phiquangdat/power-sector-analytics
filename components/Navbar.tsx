@@ -24,7 +24,6 @@ export function Navbar() {
     { href: "/", label: "Dashboard" },
     { href: "/compliance", label: "Compliance" },
     { href: "/methodology", label: "Methodology" },
-    { href: "/api-docs", label: "API Docs" },
     { href: "/about", label: "About" },
   ];
 

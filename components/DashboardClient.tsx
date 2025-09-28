@@ -109,7 +109,12 @@ export function DashboardClient() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* KPI Cards */}
-        <KPICards co2Data={co2} mixData={mix} netZeroData={netZero} />
+        <KPICards
+          co2Data={co2}
+          mixData={mix}
+          netZeroData={netZero}
+          goalTrackerData={goalTrackerData}
+        />
 
         {/* Goal Tracker Section */}
         {!goalTrackerData.error && (
