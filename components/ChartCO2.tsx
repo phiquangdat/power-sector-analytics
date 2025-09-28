@@ -1,10 +1,10 @@
 "use client";
-import dynamic from 'next/dynamic'
-const Plot = dynamic(() => import('react-plotly.js'), { ssr: false })
+import dynamic from "next/dynamic";
+const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
 import { AnomalyData } from "@/lib/goal_tracker";
 import { ForecastRow } from "@/lib/fetch";
 
-type Point = { timestamp: string; co2_intensity_g_per_kwh: number }
+type Point = { timestamp: string; co2_intensity_g_per_kwh: number };
 
 interface ChartCO2Props {
   points: Point[];
@@ -25,7 +25,7 @@ export function ChartCO2({
   }));
 
   // Create traces
-  const traces = [
+  const traces: any[] = [
     {
       x: points.map((p) => p.timestamp),
       y: points.map((p) => p.co2_intensity_g_per_kwh),

@@ -21,19 +21,30 @@ export function ChartMix({ rows }: { rows: Mix[] }) {
 		{ name: 'Fossil', y: rows.map(r => r.fossil_mw), color: '#ef4444' },
 	]
 	return (
-		<Plot
-			data={series.map(s => ({ x, y: s.y, stackgroup: 'one', type: 'scatter', mode: 'lines', name: s.name, line: { color: s.color } }))}
-			layout={{
-				title: { text: 'Generation mix (MW)' },
-				xaxis: { title: { text: 'Time' } },
-				yaxis: { title: { text: 'MW' } },
-				autosize: true,
-				margin: { l: 50, r: 20, t: 40, b: 40 },
-			}}
-			useResizeHandler
-			style={{ width: '100%', height: '400px' }}
-		/>
-	)
+    <Plot
+      data={series.map(
+        (s) =>
+          ({
+            x,
+            y: s.y,
+            stackgroup: "one",
+            type: "scatter",
+            mode: "lines",
+            name: s.name,
+            line: { color: s.color },
+          } as any)
+      )}
+      layout={{
+        title: { text: "Generation mix (MW)" },
+        xaxis: { title: { text: "Time" } },
+        yaxis: { title: { text: "MW" } },
+        autosize: true,
+        margin: { l: 50, r: 20, t: 40, b: 40 },
+      }}
+      useResizeHandler
+      style={{ width: "100%", height: "400px" }}
+    />
+  );
 }
 
 
